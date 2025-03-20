@@ -12,6 +12,7 @@ const BASE_PATH = "/kabusapi"
 type Client interface {
 	SymbolnameFutureGet(futureCode FutureCode, derivMonth int) (string, string, error)
 	SymbolnameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (string, string, error)
+	SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall PutOrCall, strikePrice int) (string, string, error)
 }
 
 func NewPaper(apiPassword string) (Client, error) {
