@@ -24,7 +24,7 @@ type BoardGetResponse struct {
 	Delta        float64 `json:"Delta"`
 	Symbol       string  `json:"Symbol"`
 	SymbolName   string  `json:"SymbolName"`
-	CurrentPrice int     `json:"CurrentPrice"`
+	CurrentPrice float64 `json:"CurrentPrice"`
 }
 
 func (c *clientImpl) BoardGet(symbolCode string, marketCode MarketCode) (BoardGetResponse, error) {
