@@ -1,25 +1,11 @@
-package token
+package api
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
-
-type Client interface {
-	Token(apiPassword string) (int, string, error)
-}
-
-func New(client *http.Client, baseURL string) Client {
-	return &clientImpl{client, baseURL}
-}
-
-type clientImpl struct {
-	client  *http.Client
-	baseURL string
-}
 
 type requestSchema struct {
 	APIPassword string `json:"APIPassword"`
@@ -36,14 +22,14 @@ func (c *clientImpl) Token(apiPassword string) (int, string, error) {
 	if err != nil {
 		return 0, "", fmt.Errorf("json.Marshal failed: %w", err)
 	}
-	resp, err := c.client.Post(url, "application/json", bytes.NewReader(reqBytes))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(reqBytes))
 	if err != nil {
-		return 0, "", fmt.Errorf("http.Post failed: %w", err)
+		return 0, "", fmt.Errorf("http.NewRequest failed: %w", err)
 	}
-	defer resp.Body.Close()
-	respBytes, err := io.ReadAll(resp.Body)
+	req.Header.Set("Content-Type", "application/json")
+	respBytes, err := c.invokeHTTP(req)
 	if err != nil {
-		return 0, "", fmt.Errorf("io.ReadAll failed: %w", err)
+		return 0, "", err
 	}
 	result := responseSchema{}
 	if err := json.Unmarshal(respBytes, &result); err != nil {
