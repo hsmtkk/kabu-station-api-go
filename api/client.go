@@ -14,6 +14,7 @@ type Client interface {
 	SymbolnameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionGetResponse, error)
 	SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionMiniGetResponse, error)
 	BoardGet(symbolCode string, marketCode MarketCode) (BoardGetResponse, error)
+	UnregisterAllPut() error
 }
 
 func NewPaper(apiPassword string) (Client, error) {
