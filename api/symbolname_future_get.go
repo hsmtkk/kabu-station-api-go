@@ -3,8 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
 	"strconv"
 )
 
@@ -26,24 +24,13 @@ type symbolnameFutureGetResponse struct {
 
 func (c *clientImpl) SymbolnameFutureGet(futureCode FutureCode, derivMonth int) (string, string, error) {
 	endpoint := fmt.Sprintf("%s/symbolname/future", c.baseURL)
-	u, err := url.Parse(endpoint)
-	if err != nil {
-		return "", "", fmt.Errorf("url.Parse failed: %w", err)
-	}
-	q := u.Query()
-	q.Set("FutureCode", string(futureCode))
-	q.Set("DerivMonth", strconv.Itoa(derivMonth))
-	u.RawQuery = q.Encode()
-	queryURL := u.String()
-	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
-	if err != nil {
-		return "", "", fmt.Errorf("http.NewRequest failed: %w", err)
-	}
-	respBytes, err := c.invokeHTTPWithTokenHeader(req)
+	respBytes, err := c.getWithToken(endpoint, map[string]string{
+		"FutureCode": string(futureCode),
+		"DerivMonth": strconv.Itoa(derivMonth),
+	})
 	if err != nil {
 		return "", "", fmt.Errorf("io.ReadAll failed: %w", err)
 	}
-	fmt.Println(string(respBytes)) // debug
 	result := symbolnameFutureGetResponse{}
 	if err := json.Unmarshal(respBytes, &result); err != nil {
 		return "", "", fmt.Errorf("json.Unmarshal failed: %w", err)

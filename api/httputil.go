@@ -1,15 +1,22 @@
 package api
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
-func (c *clientImpl) invokeHTTP(req *http.Request) ([]byte, error) {
+func (c *clientImpl) post(endpoint string, body []byte) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("http.Do failed: %w", err)
+		return nil, fmt.Errorf("http.Post failed: %w", err)
 	}
 	defer resp.Body.Close()
 	respBytes, err := io.ReadAll(resp.Body)
@@ -19,9 +26,41 @@ func (c *clientImpl) invokeHTTP(req *http.Request) ([]byte, error) {
 	return respBytes, nil
 }
 
-func (c *clientImpl) invokeHTTPWithTokenHeader(req *http.Request) ([]byte, error) {
+func (c *clientImpl) postWithToken(endpoint string, body []byte) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-API-KEY", c.token)
-	fmt.Printf("X-API-KEY: %s\n", c.token) // debug
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("http.Post failed: %w", err)
+	}
+	defer resp.Body.Close()
+	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("io.ReadAll failed: %w", err)
+	}
+	return respBytes, nil
+}
+
+func (c *clientImpl) getWithToken(endpoint string, query map[string]string) ([]byte, error) {
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("url.Parse failed: %w", err)
+	}
+	q := u.Query()
+	for k, v := range query {
+		q.Set(k, v)
+	}
+	u.RawQuery = q.Encode()
+	queryURL := u.String()
+	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
+	}
+	req.Header.Set("X-API-KEY", c.token)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("http.Do failed: %w", err)

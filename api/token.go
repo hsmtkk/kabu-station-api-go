@@ -1,10 +1,8 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 )
 
 type requestSchema struct {
@@ -22,12 +20,7 @@ func (c *clientImpl) Token(apiPassword string) (int, string, error) {
 	if err != nil {
 		return 0, "", fmt.Errorf("json.Marshal failed: %w", err)
 	}
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(reqBytes))
-	if err != nil {
-		return 0, "", fmt.Errorf("http.NewRequest failed: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	respBytes, err := c.invokeHTTP(req)
+	respBytes, err := c.post(url, reqBytes)
 	if err != nil {
 		return 0, "", err
 	}
