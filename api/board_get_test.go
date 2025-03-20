@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSymbolnameOptionMiniGet(t *testing.T) {
+func TestBoardGet(t *testing.T) {
 	apiPassword := os.Getenv("API_PASSWORD")
 	clt, err := api.NewLive(apiPassword)
 	assert.Nil(t, err)
 	assert.NotNil(t, clt)
-	result, err := clt.SymbolnameOptionMiniGet(0, 0, api.Put, 0)
+	result, err := clt.BoardGet("130047718", api.WholeDay)
 	assert.Nil(t, err)
 	fmt.Printf("%v\n", result)
 }

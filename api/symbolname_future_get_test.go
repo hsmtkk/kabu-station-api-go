@@ -14,7 +14,7 @@ func TestSymbolnameFutureGet(t *testing.T) {
 	clt, err := api.NewLive(apiPassword)
 	assert.Nil(t, err)
 	assert.NotNil(t, clt)
-	symbol, symbolname, err := clt.SymbolnameFutureGet(api.NK225, 0)
+	result, err := clt.SymbolnameFutureGet(api.NK225, 0)
 	assert.Nil(t, err)
-	fmt.Printf("symbol:%s, symbolname:%s\n", symbol, symbolname)
+	fmt.Printf("%v\n", result)
 }
