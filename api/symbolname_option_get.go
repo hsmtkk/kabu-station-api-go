@@ -42,7 +42,6 @@ func (c *clientImpl) SymbolnameOptionGet(optionCode OptionCode, derivMonth int, 
 	if err := json.Unmarshal(respBytes, &result); err != nil {
 		return result, fmt.Errorf("json.Unmarshal failed: %w", err)
 	}
-	fmt.Printf("%s\n", string(respBytes)) // debug
 	if result.Code != 0 {
 		return result, fmt.Errorf("got non 0 code %d: %s", result.Code, result.Message)
 	}
