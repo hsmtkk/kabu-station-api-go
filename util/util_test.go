@@ -2,6 +2,7 @@ package util_test
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"testing"
 
@@ -11,10 +12,17 @@ import (
 )
 
 func TestNthMonth(t *testing.T) {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
 	apiPassword := os.Getenv("API_PASSWORD")
-	client, err := api.NewLive(apiPassword)
+	client, err := api.NewLive(logger, apiPassword)
 	assert.Nil(t, err)
-	result, err := util.NthMonth(client, 1)
+	utility := util.New(logger, client)
+	atm, err := utility.AtTheMoney()
 	assert.Nil(t, err)
-	fmt.Printf("%v\n", result)
+	fmt.Printf("%d\n", atm)
+	month, err := utility.NthMonth(1)
+	assert.Nil(t, err)
+	fmt.Printf("%v\n", month)
 }

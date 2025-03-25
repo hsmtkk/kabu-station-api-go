@@ -1,7 +1,9 @@
 package api
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"log/slog"
 	"net/http"
 )
 
@@ -17,17 +19,18 @@ type Client interface {
 	UnregisterAllPut() error
 }
 
-func NewPaper(apiPassword string) (Client, error) {
-	return newClient(apiPassword, PAPER_PORT)
+func NewPaper(logger *slog.Logger, apiPassword string) (Client, error) {
+	return newClient(logger, apiPassword, PAPER_PORT)
 }
 
-func NewLive(apiPassword string) (Client, error) {
-	return newClient(apiPassword, LIVE_PORT)
+func NewLive(logger *slog.Logger, apiPassword string) (Client, error) {
+	return newClient(logger, apiPassword, LIVE_PORT)
 }
 
-func newClient(apiPassword string, port int) (Client, error) {
+func newClient(logger *slog.Logger, apiPassword string, port int) (Client, error) {
+	logger.Debug("newClient", "apiPassword(SHA256)", hash(apiPassword), "port", port)
 	baseURL := fmt.Sprintf("http://localhost:%d%s", port, BASE_PATH)
-	impl := clientImpl{httpClient: http.DefaultClient, baseURL: baseURL, token: ""}
+	impl := clientImpl{logger: logger, httpClient: http.DefaultClient, baseURL: baseURL, token: ""}
 	_, token, err := impl.Token(apiPassword)
 	if err != nil {
 		return nil, err
@@ -37,7 +40,13 @@ func newClient(apiPassword string, port int) (Client, error) {
 }
 
 type clientImpl struct {
+	logger     *slog.Logger
 	httpClient *http.Client
 	baseURL    string
 	token      string
+}
+
+func hash(s string) string {
+	sum := sha256.Sum256([]byte(s))
+	return fmt.Sprintf("%x", sum)
 }

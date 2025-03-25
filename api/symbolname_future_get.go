@@ -23,6 +23,7 @@ type SymbolnameFutureGetResponse struct {
 }
 
 func (c *clientImpl) SymbolnameFutureGet(futureCode FutureCode, derivMonth int) (SymbolnameFutureGetResponse, error) {
+	c.logger.Debug("SymbolnameFutureGet", "futureCode", futureCode, "derivMonth", derivMonth)
 	result := SymbolnameFutureGetResponse{}
 	endpoint := fmt.Sprintf("%s/symbolname/future", c.baseURL)
 	respBytes, err := c.getWithToken(endpoint, map[string]string{
@@ -38,5 +39,6 @@ func (c *clientImpl) SymbolnameFutureGet(futureCode FutureCode, derivMonth int) 
 	if result.Code != 0 {
 		return result, fmt.Errorf("got non 0 code %d: %s", result.Code, result.Message)
 	}
+	c.logger.Debug("SymbolnameFutureGet", "response", result)
 	return result, nil
 }

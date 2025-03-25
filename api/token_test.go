@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"log/slog"
 	"os"
 	"testing"
 
@@ -9,8 +10,11 @@ import (
 )
 
 func TestToken(t *testing.T) {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
 	apiPassword := os.Getenv("API_PASSWORD")
-	clt, err := api.NewLive(apiPassword)
+	clt, err := api.NewLive(logger, apiPassword)
 	assert.Nil(t, err)
 	assert.NotNil(t, clt)
 }

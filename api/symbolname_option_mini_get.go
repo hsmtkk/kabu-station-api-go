@@ -14,6 +14,7 @@ type SymbolnameOptionMiniGetResponse struct {
 }
 
 func (c *clientImpl) SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionMiniGetResponse, error) {
+	c.logger.Debug("SymbolnameOptionMiniGet", "derivMonth", derivMonth, "derivWeekly", derivWeekly, "putOrCall", putOrCall, "strikePrice", strikePrice)
 	result := SymbolnameOptionMiniGetResponse{}
 	endpoint := fmt.Sprintf("%s/symbolname/minioptionweekly", c.baseURL)
 	respBytes, err := c.getWithToken(endpoint, map[string]string{
@@ -31,5 +32,6 @@ func (c *clientImpl) SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, pu
 	if result.Code != 0 {
 		return result, fmt.Errorf("got non 0 code %d: %s", result.Code, result.Message)
 	}
+	c.logger.Debug("SymbolnameOptionMiniGet", "response", result)
 	return result, nil
 }

@@ -28,6 +28,7 @@ type SymbolnameOptionGetResponse struct {
 }
 
 func (c *clientImpl) SymbolnameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionGetResponse, error) {
+	c.logger.Debug("SymbolnameOptionGet", "optionCode", optionCode, "derivMonth", derivMonth, "putOrCall", putOrCall, "strikePrice", strikePrice)
 	result := SymbolnameOptionGetResponse{}
 	endpoint := fmt.Sprintf("%s/symbolname/option", c.baseURL)
 	respBytes, err := c.getWithToken(endpoint, map[string]string{
@@ -45,5 +46,6 @@ func (c *clientImpl) SymbolnameOptionGet(optionCode OptionCode, derivMonth int, 
 	if result.Code != 0 {
 		return result, fmt.Errorf("got non 0 code %d: %s", result.Code, result.Message)
 	}
+	c.logger.Debug("SymbolnameOptionGet", "response", result)
 	return result, nil
 }
