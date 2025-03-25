@@ -15,6 +15,7 @@ type responseSchema struct {
 }
 
 func (c *clientImpl) Token(apiPassword string) (int, string, error) {
+	c.logger.Debug("Token", "apiPassword(SHA256)", hash(apiPassword))
 	url := fmt.Sprintf("%s/token", c.baseURL)
 	reqBytes, err := json.Marshal(requestSchema{APIPassword: apiPassword})
 	if err != nil {
@@ -28,5 +29,6 @@ func (c *clientImpl) Token(apiPassword string) (int, string, error) {
 	if err := json.Unmarshal(respBytes, &result); err != nil {
 		return 0, "", fmt.Errorf("json.Unmarshal failed: %w", err)
 	}
+	c.logger.Debug("Token", "response", result)
 	return result.ResultCode, result.Token, nil
 }

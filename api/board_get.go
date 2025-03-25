@@ -28,6 +28,7 @@ type BoardGetResponse struct {
 }
 
 func (c *clientImpl) BoardGet(symbolCode string, marketCode MarketCode) (BoardGetResponse, error) {
+	c.logger.Debug("BoardGet", "symbolCode", symbolCode, "marketCode", marketCode)
 	result := BoardGetResponse{}
 	symbol := symbolCode + "@" + string(marketCode)
 	endpoint := fmt.Sprintf("%s/board/%s", c.baseURL, symbol)
@@ -43,5 +44,6 @@ func (c *clientImpl) BoardGet(symbolCode string, marketCode MarketCode) (BoardGe
 	if result.Code != 0 {
 		return result, fmt.Errorf("got non 0 code %d: %s", result.Code, result.Message)
 	}
+	c.logger.Debug("BoardGet", "response", result)
 	return result, nil
 }

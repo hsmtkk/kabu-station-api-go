@@ -2,15 +2,31 @@ package util
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
 	"github.com/hsmtkk/kabu-station-api-go/api"
 )
 
+type Utility interface {
+	AtTheMoney() (int, error)
+	NthMonth(nthMonth int) (time.Time, error)
+}
+
+type utilityImpl struct {
+	logger    *slog.Logger
+	apiClient api.Client
+}
+
+func New(logger *slog.Logger, apiClient api.Client) Utility {
+	return &utilityImpl{logger, apiClient}
+}
+
 // nth is beginning from 0
-func NthMonth(client api.Client, nthMonth int) (time.Time, error) {
-	futureResp, err := client.SymbolnameFutureGet(api.NK225mini, 0)
+func (u *utilityImpl) NthMonth(nthMonth int) (time.Time, error) {
+	u.logger.Debug("NthMonth", "nthMonth", nthMonth)
+	futureResp, err := u.apiClient.SymbolnameFutureGet(api.NK225mini, 0)
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -19,6 +35,7 @@ func NthMonth(client api.Client, nthMonth int) (time.Time, error) {
 		return time.Time{}, err
 	}
 	result := firstMonth.AddDate(0, nthMonth, 0)
+	u.logger.Debug("NthMonth", "response", result)
 	return result, nil
 }
 
@@ -35,17 +52,20 @@ func parseSymbolName(symbolname string) (time.Time, error) {
 }
 
 // ATMオプションの権利行使価格 先物ミニの価格を125の倍数に丸める
-func AtTheMoney(client api.Client) (int, error) {
+func (u *utilityImpl) AtTheMoney() (int, error) {
+	u.logger.Debug("AtTheMoney")
 	// 先物ミニのシンボル
-	futureResp, err := client.SymbolnameFutureGet(api.NK225mini, 0)
+	futureResp, err := u.apiClient.SymbolnameFutureGet(api.NK225mini, 0)
 	if err != nil {
 		return 0, err
 	}
 	// 先物ミニの価格
-	boardResp, err := client.BoardGet(futureResp.Symbol, api.WholeDay)
+	boardResp, err := u.apiClient.BoardGet(futureResp.Symbol, api.WholeDay)
 	if err != nil {
 		return 0, err
 	}
 	price := boardResp.CurrentPrice
-	return int(price/125) * 125, nil
+	roundPrice := int(price/125) * 125
+	u.logger.Debug("AtTheMoney", "response", roundPrice)
+	return roundPrice, nil
 }

@@ -9,6 +9,7 @@ import (
 )
 
 func (c *clientImpl) post(endpoint string, body []byte) ([]byte, error) {
+	c.logger.Debug("post", "endpoint", endpoint)
 	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
@@ -23,10 +24,12 @@ func (c *clientImpl) post(endpoint string, body []byte) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("io.ReadAll failed: %w", err)
 	}
+	c.logger.Debug("post", "response", string(respBytes))
 	return respBytes, nil
 }
 
 func (c *clientImpl) getWithToken(endpoint string, query map[string]string) ([]byte, error) {
+	c.logger.Debug("getWithToken", "endpoint", endpoint, "query", query)
 	u, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("url.Parse failed: %w", err)
@@ -51,10 +54,12 @@ func (c *clientImpl) getWithToken(endpoint string, query map[string]string) ([]b
 	if err != nil {
 		return nil, fmt.Errorf("io.ReadAll failed: %w", err)
 	}
+	c.logger.Debug("getWithToken", "response", string(respBytes))
 	return respBytes, nil
 }
 
-func (c *clientImpl) put(endpoint string) ([]byte, error) {
+func (c *clientImpl) putWithToken(endpoint string) ([]byte, error) {
+	c.logger.Debug("putWithToken", "endpoint", endpoint)
 	req, err := http.NewRequest(http.MethodPut, endpoint, nil)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
@@ -69,5 +74,6 @@ func (c *clientImpl) put(endpoint string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("io.ReadAll failed: %w", err)
 	}
+	c.logger.Debug("putWithToken", "response", string(respBytes))
 	return respBytes, nil
 }
