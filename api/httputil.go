@@ -58,12 +58,13 @@ func (c *clientImpl) getWithToken(endpoint string, query map[string]string) ([]b
 	return respBytes, nil
 }
 
-func (c *clientImpl) putWithToken(endpoint string) ([]byte, error) {
+func (c *clientImpl) putWithToken(endpoint string, body []byte) ([]byte, error) {
 	c.logger.Debug("putWithToken", "endpoint", endpoint)
-	req, err := http.NewRequest(http.MethodPut, endpoint, nil)
+	req, err := http.NewRequest(http.MethodPut, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest failed: %w", err)
 	}
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-API-KEY", c.token)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

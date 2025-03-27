@@ -3,15 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-)
 
-type MarketCode string
-
-const (
-	Tokyo    MarketCode = "1"  //東証
-	WholeDay            = "2"  // 日通し
-	Day                 = "23" // 日中
-	Night               = "24" // 夜間
+	"github.com/hsmtkk/kabu-station-api-go/api/market_code"
 )
 
 type BoardGetResponse struct {
@@ -27,7 +20,7 @@ type BoardGetResponse struct {
 	CurrentPrice float64 `json:"CurrentPrice"`
 }
 
-func (c *clientImpl) BoardGet(symbolCode string, marketCode MarketCode) (BoardGetResponse, error) {
+func (c *clientImpl) BoardGet(symbolCode string, marketCode market_code.MarketCode) (BoardGetResponse, error) {
 	c.logger.Debug("BoardGet", "symbolCode", symbolCode, "marketCode", marketCode)
 	result := BoardGetResponse{}
 	symbol := symbolCode + "@" + string(marketCode)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+
+	"github.com/hsmtkk/kabu-station-api-go/api/market_code"
 )
 
 const PAPER_PORT = 18081
@@ -15,7 +17,8 @@ type Client interface {
 	SymbolnameFutureGet(futureCode FutureCode, derivMonth int) (SymbolnameFutureGetResponse, error)
 	SymbolnameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionGetResponse, error)
 	SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionMiniGetResponse, error)
-	BoardGet(symbolCode string, marketCode MarketCode) (BoardGetResponse, error)
+	BoardGet(symbolCode string, marketCode market_code.MarketCode) (BoardGetResponse, error)
+	RegisterPut(symbols []SymbolMarketCode) ([]SymbolMarketCode, error)
 	UnregisterAllPut() error
 }
 

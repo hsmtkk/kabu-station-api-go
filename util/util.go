@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hsmtkk/kabu-station-api-go/api"
+	"github.com/hsmtkk/kabu-station-api-go/api/market_code"
 )
 
 type Utility interface {
@@ -60,7 +61,7 @@ func (u *utilityImpl) AtTheMoney() (int, error) {
 		return 0, err
 	}
 	// 先物ミニの価格
-	boardResp, err := u.apiClient.BoardGet(futureResp.Symbol, api.WholeDay)
+	boardResp, err := u.apiClient.BoardGet(futureResp.Symbol, market_code.WholeDay)
 	if err != nil {
 		return 0, err
 	}

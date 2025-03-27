@@ -13,7 +13,7 @@ type unregisterAllResponse struct {
 func (c *clientImpl) UnregisterAllPut() error {
 	c.logger.Debug("UnregisterAllPut")
 	endpoint := fmt.Sprintf("%s/unregister/all", c.baseURL)
-	respBytes, err := c.putWithToken(endpoint)
+	respBytes, err := c.putWithToken(endpoint, nil)
 	if err != nil {
 		return err
 	}

@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	"github.com/hsmtkk/kabu-station-api-go/api"
-	"github.com/hsmtkk/kabu-station-api-go/api/market_code"
+	"github.com/hsmtkk/kabu-station-api-go/api/exchange_code"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBoardGet(t *testing.T) {
+func TestRegisterPut(t *testing.T) {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
@@ -19,7 +19,8 @@ func TestBoardGet(t *testing.T) {
 	clt, err := api.NewLive(logger, apiPassword)
 	assert.Nil(t, err)
 	assert.NotNil(t, clt)
-	result, err := clt.BoardGet("130047718", market_code.WholeDay)
+	result, err := clt.RegisterPut([]api.SymbolMarketCode{{"130047718", exchange_code.WholeDay}})
 	assert.Nil(t, err)
+	assert.NotNil(t, result)
 	fmt.Printf("%v\n", result)
 }
