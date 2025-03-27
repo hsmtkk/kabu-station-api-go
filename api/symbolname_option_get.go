@@ -4,20 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-)
 
-type OptionCode string
-
-const (
-	NK225op     OptionCode = "NK225op"
-	NK225miniop            = "NK225miniop"
-)
-
-type PutOrCall string
-
-const (
-	Put  PutOrCall = "P"
-	Call           = "C"
+	"github.com/hsmtkk/kabu-station-api-go/api/option_code"
+	"github.com/hsmtkk/kabu-station-api-go/api/put_or_call"
 )
 
 type SymbolnameOptionGetResponse struct {
@@ -27,7 +16,7 @@ type SymbolnameOptionGetResponse struct {
 	SymbolName string `json:"SymbolName"`
 }
 
-func (c *clientImpl) SymbolnameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionGetResponse, error) {
+func (c *clientImpl) SymbolnameOptionGet(optionCode option_code.OptionCode, derivMonth int, putOrCall put_or_call.PutOrCall, strikePrice int) (SymbolnameOptionGetResponse, error) {
 	c.logger.Debug("SymbolnameOptionGet", "optionCode", optionCode, "derivMonth", derivMonth, "putOrCall", putOrCall, "strikePrice", strikePrice)
 	result := SymbolnameOptionGetResponse{}
 	endpoint := fmt.Sprintf("%s/symbolname/option", c.baseURL)

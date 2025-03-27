@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"github.com/hsmtkk/kabu-station-api-go/api/put_or_call"
 )
 
 type SymbolnameOptionMiniGetResponse struct {
@@ -13,7 +15,7 @@ type SymbolnameOptionMiniGetResponse struct {
 	SymbolName string `json:"SymbolName"`
 }
 
-func (c *clientImpl) SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall PutOrCall, strikePrice int) (SymbolnameOptionMiniGetResponse, error) {
+func (c *clientImpl) SymbolnameOptionMiniGet(derivMonth int, derivWeekly int, putOrCall put_or_call.PutOrCall, strikePrice int) (SymbolnameOptionMiniGetResponse, error) {
 	c.logger.Debug("SymbolnameOptionMiniGet", "derivMonth", derivMonth, "derivWeekly", derivWeekly, "putOrCall", putOrCall, "strikePrice", strikePrice)
 	result := SymbolnameOptionMiniGetResponse{}
 	endpoint := fmt.Sprintf("%s/symbolname/minioptionweekly", c.baseURL)
